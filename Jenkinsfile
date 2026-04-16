@@ -26,7 +26,8 @@ pipeline {
         stage('Deploy to K8s') {
             steps {
                 echo 'Updating Kubernetes Deployment...'
-                sh 'kubectl apply -f k8s/chat-server.yaml'
+                sh "sed -i 's/127.0.0.1/host.docker.internal/g' /var/jenkins_home/.kube/config"
+                sh 'kubectl apply -f k8s/chat-server.yaml --insecure-skip-tls-verify'
             }
         }
     }
