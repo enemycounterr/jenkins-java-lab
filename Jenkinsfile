@@ -2,35 +2,31 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout SCM') {
+        stage('Checkout') {
             steps {
-                echo '>>> ЕТАП: Скачування коду з GitHub...'
                 checkout scm
             }
         }
-
-
-        stage('Build Java App') {
+        stage('Maven Build') {
             steps {
-                echo '>>> ЕТАП: Компіляція проекту...'
+                echo 'Building JAR with dependencies...'
 
-                echo 'Виконується команда: mvn clean package'
+                sh 'mvn clean package'
             }
         }
-
-
-        stage('Unit Tests') {
+        stage('Docker Image') {
             steps {
-                echo '>>> ЕТАП: Запуск тестів JUnit...'
-                echo 'Тести пройшли успішно!'
+                echo 'Building Docker Image...'
+                sh 'docker build -t tcp-chat-server:latest .'
             }
         }
-
-
-        stage('Deploy') {
+        stage('Deploy to K8s') {
             steps {
-                echo '>>> ЕТАП: Розгортання додатку в Docker контейнер...'
-                echo 'Додаток успішно запущено на порту 8080'
+                echo 'Updating Kubernetes Deployment...'
+                // Завантажуємо свіжий образ у Minikube
+                sh 'minikube image load tcp-chat-server:latest'
+                // Застосовуємо конфігурацію оркестрації
+                sh 'kubectl apply -f k8s/chat-server.yaml'
             }
         }
     }

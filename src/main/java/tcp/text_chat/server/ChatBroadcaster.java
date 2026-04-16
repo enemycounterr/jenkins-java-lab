@@ -1,0 +1,36 @@
+package tcp.text_chat.server;
+
+
+import lombok.AllArgsConstructor;
+import tcp.text_chat.common.ChatMessage;
+
+
+@AllArgsConstructor
+public class ChatBroadcaster {
+
+    private final ClientRegistry clientRegistry;
+
+    public void broadcast(ChatMessage message) {
+        for (ChatClientSession session : clientRegistry.all()) {
+            session.send(message);
+        }
+
+    }
+
+    public void broadcastExcept(String excludedUsername, ChatMessage message) {
+        for (ChatClientSession session : clientRegistry.all()) {
+            if (!session.getUsername().equals(excludedUsername)) {
+                session.send(message);
+            }
+        }
+    }
+
+    public boolean sendPrivate(String recipientUserName, ChatMessage message) {
+        ChatClientSession session = clientRegistry.get(recipientUserName);
+        if (session != null) {
+            session.send(message);
+            return true;
+        }
+        return false;
+    }
+}
