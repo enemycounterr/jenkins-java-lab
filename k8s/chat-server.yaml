@@ -15,7 +15,7 @@ spec:
       containers:
         - name: chat-server
           image: tcp-chat-server:latest
-          imagePullPolicy: Never # Важливо для роботи з локальними образами в Minikube
+          imagePullPolicy: Never
           ports:
             - containerPort: 7150
 ---

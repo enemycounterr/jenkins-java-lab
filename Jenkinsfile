@@ -10,7 +10,6 @@ pipeline {
         stage('Maven Build') {
             steps {
                 echo 'Building JAR with dependencies...'
-
                 sh 'mvn clean package'
             }
         }
@@ -23,9 +22,7 @@ pipeline {
         stage('Deploy to K8s') {
             steps {
                 echo 'Updating Kubernetes Deployment...'
-                // Завантажуємо свіжий образ у Minikube
                 sh 'minikube image load tcp-chat-server:latest'
-                // Застосовуємо конфігурацію оркестрації
                 sh 'kubectl apply -f k8s/chat-server.yaml'
             }
         }
