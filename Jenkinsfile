@@ -26,7 +26,6 @@ pipeline {
         stage('Deploy to K8s') {
             steps {
                 echo 'Updating Kubernetes Deployment...'
-                sh 'minikube image load tcp-chat-server:latest'
                 sh 'kubectl apply -f k8s/chat-server.yaml'
             }
         }
